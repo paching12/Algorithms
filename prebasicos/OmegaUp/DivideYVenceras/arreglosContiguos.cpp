@@ -8,7 +8,7 @@ int getMax(int val1, int val2) {
 
 int main()
 {
-    int n[] = {1, 2, 3, 4, 5};
+    int n[] = {-2, -5, 6, -2, -3, 1, 5, -6};
     int size = sizeof(n) / sizeof(n[0]);
 
     int backtrack[size];
@@ -18,57 +18,28 @@ int main()
     for (int i = 0; i < size; i++)
         backtrack[i] = 0;
 
-    for (int i = 0; i < size; i++)
-    {
-        long total = 0;
-        int startJ = size-1;
-        int j = startJ;
-        for (; j >= 0 ;j--)
-        {
-            // cout << "[" << j << "] = " << n[j] << " + " << "total:" << total << endl;
-            if (!i) {
-                // cout << "startJ:" << startJ << endl;
-                if(startJ == size-1) {
-                    total += n[j];
-                    if (i == j) {
-                        if (startJ) {
-                            j = startJ--;
-                            if (!i) {
-                                // cout << "COLLECT VALUE:" << total << endl;
-                                // cout << "J:" << j << " I:" << i << endl;
-                                // cout << "size - j:" << size - j -1 << endl;
-                                backtrack[size - j - 1] = total;
-                                // cout << "backtrack[0]:" << backtrack[0] << endl;
-                                maxVal = total;
-                            }
-                        }
-                    }
-                } 
+    for (int i = 0; i < size; i++) {
+        backtrack[0] += n[size - 1 - i];
+    }
 
-                if (startJ < size-1) {
-                    if(j <= 1) break;
-                    // cout << "J:" << j << " I:" << i << endl;
-                    total += (n[j] * -1); 
-                    backtrack[size - j -(i ? +1 : 0)] = total;
-                    // cout << "saving at:" << size - j -(i ? +1 : 0) << endl;
-                    // cout << "COLLECT VALUE:" << total << endl;
-                    maxVal = getMax(maxVal, total);
-                }
-            } else {
-                
-                // cout << "J:" << j << " I:" << i << endl;
-                // for (int w = 0; w < size; w++) {
-                //     cout << backtrack[w] << " ";
-                // }
-                // cout << endl;
-                total = backtrack[size - 1 - j] + (n[i - 1] * -1);
-                // cout << "COLLECT VALUE:" << total << endl;
-                backtrack[size - 1 - j] = total;
-                maxVal = getMax(maxVal, total);
-                // break;
-            }
-            // cout << "[" << i << "]" << " a " << "[" << j << "] = " << total << endl;
+    maxVal = backtrack[0];
+
+    for (int i = 0; i < size - 2; i++) {
+        backtrack[i + 1] = backtrack[i] + (n[size - i - 1] * -1);
+        maxVal = getMax(maxVal, backtrack[i + 1]);
+    }
+
+    long j = 0;
+    for (int i = 0; i < size - 1; i++) {
+        backtrack[i] = backtrack[i] + (n[j] * -1);
+        maxVal = getMax(backtrack[i], maxVal);
+        if (i == (size - 3 - j)) {
+            j++;
+            i = -1;
+            if (j == (size - 2)) break;
+            continue;
         }
     }
+
     cout << maxVal << endl;
 }
